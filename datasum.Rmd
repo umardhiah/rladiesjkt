@@ -1,0 +1,179 @@
+---
+title: "Data Summary in R"
+author: "Sheherazade (R ladies Bogor)"
+date: "02/07/2019"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Before!
+
++ Always check which project and working directory you are working now
+```{r}
+getwd()
+```
+
++ All the dataset is in the folder used as a working directory
+
++ All the materials are compiled from different sources:
+
+  - McGarigal, K. Course Analysis of Environmental Data: Introduction to R. University of Massachusetts Amherst. www.umass.edu/landeco/teaching/ecodata/syllabus.ecodata.pdf
+
+  - www.statisticssolutions.com/data-levels-of-measurement/
+
+  - www.statmethods.net/stats/descriptives.html
+
+  - www.r-bloggers.com/r-tutorial-series-summary-and-descriptive-statistics/
+
+  - www.sthda.com/english/wiki/descriptive-statistics-and-graphics
+
+
+# Data Summary in R
+
+Variables -> named computer memory. For example, a list of species recorded stored in variable named 'species_name'.
+
+```{r}
+pi <- 3.14 #real
+number_species <- 327 #integer
+species_name <- 'Panthera tigris' #character/string, should be entered in quotes
+rainforest <- TRUE #logical (only TRUE or FALSE)
+```
+
+## Data Structures
+
+1. **vectors** : one-dimensional, a single data type (*e.g.* integer, real, and character/string).
+
+```{r}
+example_vector<-c(2,4,6,8,10)
+example_vector
+(example_vector<-c(2,4,6,8,10))
+example_vector[2]     #individual item is identified by the sequence (1-n)
+```
+
+2. **matrices** : two dimensional, created by binding two or more vectors of the same type and length.
+
+```{r}
+example_vector_2<-c(1,3,5,7,9)    
+example_matrix<-cbind(example_vector,example_vector_2)
+example_matrix
+
+example_matrix[4,2]   #row 4, column 2
+example_matrix[5,]    #row 5
+example_matrix[,1]    #column 1
+example_matrix[]      #all
+example_matrix[,1:2]   #column 1 to 2
+example_matrix[,-1]   #all except column 1. minus artinya kecuali
+```
+
+3. **data frames** : one to multi-dimensional. Similar to spreadsheet. Column - field.
+
+```{r}
+data1<-read.csv("data1.csv")
+head(data1)
+```
+
+4. **lists** : compound objects of associated data. It could consist of vector, matrix, and data frames.
+
+```{r}
+example_list<-list(example_vector,data1)
+example_list
+names(example_list)<-c('vector','data frame')
+example_list
+```
+
+## Data types
+
+Understanding classification of data is a prerequisite for data summary and visualization, including to determine the correct statistical analysis. There are four levels of data measurement:
+
+**1. Nominal data**  
+Labels for a particular category, usually referred as categorical data. For example:
+
++ Gender: male and female
++ Religion: moslem, christian, hindu, budha, etc.
++ Occupation: fisherman, businessman, etc.
+
+In R, categorical data is represented as factors that contain levels.
+
+You can check the structure of data using 'str' function. 
+
+```{r}
+data1<-read.csv("data1.csv")
+names(data1)
+str(data1$gender)
+```
+
+Gender is a factor, with two levels: male and female.
+
+**2. Ordinal data**  
+This is similar to nominal, but it has orders. For example:
+
++ Level of income: lower class, middle class, and upper class
++ Level of agreement: strongly disagree, disagree, neutral, agree, and strongly agree
+
+In R, function `factor()` assigns order to nominal data.
+
+```{r}
+factor_income<-factor(data1$income,order=TRUE,levels=c("lower_class","middle_class","upper_class"))
+str(factor_income)
+```
+
+Nominal and ordinal data are also reffered to as qualitative data.
+
+**3. Interval data**  
+
++ has values of equal intervals that mean something (20-30$^\circ$C and 40-50 $^\circ$C have 10 degree differences)
++ no absolute zero
+
+For example: Temperature (Celcius, Fahrenheit)
+
+**4. Ratio data**
+
++ like interval data but has absolute zero
+
+For example: height, weight (no 0 kg, but there is 0 $^\circ$C)
+
+Interval and ratio data are usually called as quantitative data, which may be classified as **discrete** (integer in R) and **continuous** (real in R). 
+
+## Why is this important?
+
++ t.test -> continuous data (sugar concentration in tomatoes)
++ ANOVA -> continuous data (mice weight compared among control, treatment 1, and treatment 2)
++ linear modelling -> determine distribution (binary categorical -> binomial, count discrete -> poisson)
+
+**So, understand your data first!**
+
+## Other basic operations in R
+
+### Missing values
+
+```{r}
+example<-c(1,3,5,7,9,11)     
+#delete number 9 or replace it with NA (if delete 9 does not work) for this set of codes
+example<-c(1,3,5,7,NA,11)     
+example<-as.numeric(example)
+str(example)
+str(example)
+is.na(example)     #to identify missing values
+example_2<-example[!is.na(example)]  #to use all of the vector except the missing values
+(example_2<-example[!is.na(example)]) #or
+example_3<-na.omit(example)
+example_3
+(mean<-mean(example))
+(mean_1<-mean(example,na.rm=TRUE))
+```
+
+
+### Creating subsets
+
+```{r, eval = FALSE}
+head(data1)
+data_new<-data1[,5:7]  #select all rows and columns 5 through 7
+head(data_new)
+
+```
+
